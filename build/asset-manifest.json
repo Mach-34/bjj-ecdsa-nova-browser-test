@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/static/css/main.44edfb9f.css",
+    "main.js": "/static/js/main.3743e8d5.js",
+    "static/js/480.b7d074e1.chunk.js": "/static/js/480.b7d074e1.chunk.js",
+    "static/js/453.4dcc6dec.chunk.js": "/static/js/453.4dcc6dec.chunk.js",
+    "static/js/654.b7c35c39.chunk.js": "/static/js/654.b7c35c39.chunk.js",
+    "static/media/babyjubjub_ecdsa_nova_bg.wasm": "/static/media/babyjubjub_ecdsa_nova_bg.264e1889ddf6aa187bb7.wasm",
+    "index.html": "/index.html",
+    "main.44edfb9f.css.map": "/static/css/main.44edfb9f.css.map",
+    "main.3743e8d5.js.map": "/static/js/main.3743e8d5.js.map",
+    "480.b7d074e1.chunk.js.map": "/static/js/480.b7d074e1.chunk.js.map",
+    "453.4dcc6dec.chunk.js.map": "/static/js/453.4dcc6dec.chunk.js.map",
+    "654.b7c35c39.chunk.js.map": "/static/js/654.b7c35c39.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.44edfb9f.css",
+    "static/js/main.3743e8d5.js"
+  ]
+}
