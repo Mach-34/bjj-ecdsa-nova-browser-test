@@ -1,0 +1,14 @@
+{
+  "name": "babyjubjub-ecdsa-nova",
+  "version": "0.1.0",
+  "files": [
+    "babyjubjub_ecdsa_nova_bg.wasm",
+    "babyjubjub_ecdsa_nova.js",
+    "babyjubjub_ecdsa_nova.d.ts"
+  ],
+  "module": "babyjubjub_ecdsa_nova.js",
+  "types": "babyjubjub_ecdsa_nova.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
