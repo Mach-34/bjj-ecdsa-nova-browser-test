@@ -4,15 +4,12 @@ import { useEffect, useState } from 'react';
 const useIndexDB = (dbName: string, storeName: string) => {
   const [db, setDb] = useState<IDBPDatabase | null>(null);
 
-  const add = async (key: number | string, data: any) => {
+  const addItem = async (key: number | string, data: Blob) => {
     if (!db) return;
     const tx = db.transaction(storeName, 'readwrite');
     const store = tx.objectStore(storeName);
     await store.add(data, key);
   };
-
-  // Checks to see whether
-  const checkStorageCapacity = () => {};
 
   // Check to see how many items exist in the store
   const itemCount = async (): Promise<number> => {
@@ -22,7 +19,7 @@ const useIndexDB = (dbName: string, storeName: string) => {
     return await store.count();
   };
 
-  const getItems = async () => {
+  const getItems = async (): Promise<Array<Blob>> => {
     if (!db) return [];
     const tx = db.transaction(storeName, 'readonly');
     const store = tx.objectStore(storeName);
@@ -43,7 +40,7 @@ const useIndexDB = (dbName: string, storeName: string) => {
     })();
   }, [dbName, storeName]);
 
-  return { add, dbInitialized: !!db, getItems, itemCount };
+  return { addItem, dbInitialized: !!db, getItems, itemCount };
 };
 
 export default useIndexDB;

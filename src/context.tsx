@@ -37,7 +37,7 @@ const vkUrl = `${bucketUrl}/vk`;
 export const NovaProvider: React.FC<{ children: JSX.Element }> = ({
   children,
 }) => {
-  const { add, dbInitialized, getItems, itemCount } = useIndexDB(
+  const { addItem, dbInitialized, getItems, itemCount } = useIndexDB(
     'bbj',
     'params'
   );
@@ -60,44 +60,63 @@ export const NovaProvider: React.FC<{ children: JSX.Element }> = ({
     // track start time for download
     const start = new Date().getTime();
 
+    // TODO: Need to fully consider browser limitations to enforce this
+    const minStorage = 40 * 1000000; // 40 megabytes
+    const { quota, usage } = await navigator.storage.estimate();
+    // Note: quota may be undefined and if so the limit is a machine's disk space
+    const hasAvailableSpace = quota ? quota - (usage ?? 0) > minStorage : true;
+
     // Check if artifact type is params
     const isParams = artifactType === 'params';
 
     // If artifact type is params then check how many are stored to determine how many to fetch
     const startIndex = isParams ? await itemCount() : 0;
 
-    // build requests
-    let requests = [];
     let data: Map<Number, Blob> = new Map();
-    for (let i = startIndex; i < 10; i++) {
-      let req = async () => {
+
+    // Fetch params in sequence and store in index db
+
+    if (isParams && hasAvailableSpace && startIndex !== 10) {
+      console.log(`${startIndex} out of 10 param chunks stored`);
+      for (let i = startIndex; i < 10; i++) {
         let full_url = `${bucketFolderUrl}/${artifactType}_${i}.json`;
         let res = await fetch(full_url, {
           headers: { 'Content-Type': 'application/x-binary' },
-        }).then(async (res) => await res.blob());
-        data.set(i, res);
-      };
-      requests.push(req());
+        });
+        const blob = await res.blob();
+        // Store blob in indexdb
+        await addItem(i, blob);
+        console.log(`Chunk ${i + 1} of 10 stored`);
+        data.set(i, blob);
+      }
+    } else if (!isParams || !hasAvailableSpace) {
+      // build requests
+      let requests = [];
+      for (let i = 0; i < 10; i++) {
+        let req = async () => {
+          let full_url = `${bucketFolderUrl}/${artifactType}_${i}.json`;
+          let res = await fetch(full_url, {
+            headers: { 'Content-Type': 'application/x-binary' },
+          }).then(async (res) => await res.blob());
+          data.set(i, res);
+        };
+        requests.push(req());
+      }
+      // await all requests
+      await Promise.all(requests);
     }
-
-    // await all requests
-    await Promise.all(requests);
 
     // build into one blob
     let chunks = [];
-    if (isParams) {
+
+    if (isParams && hasAvailableSpace) {
       // Load in stored chunks
       const stored = await getItems();
       chunks.push(...stored);
-    }
-    for (let i = startIndex; i < 10; i++) {
-      const chunk = data.get(i)!;
-      // If artifact is params then store chunks in indexdb
-      if (isParams) {
-        await add(i, chunk);
+    } else {
+      for (let i = 0; i < 10; i++) {
+        chunks.push(data.get(i)!);
       }
-
-      chunks.push(chunk);
     }
 
     let compressed = new Blob(chunks);
