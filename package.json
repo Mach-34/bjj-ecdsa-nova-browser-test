@@ -12,6 +12,7 @@
     "@types/react": "^18.2.74",
     "@types/react-dom": "^18.2.23",
     "babyjubjub-ecdsa-nova": "file:public/babyjubjub-ecdsa-nova",
+    "idb": "^8.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -19,7 +20,6 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-
     "start": "craco start",
     "build": "react-scripts build",
     "test": "react-scripts test",
